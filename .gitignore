@@ -1,0 +1,21 @@
+*.asv
+*.pdf
+*.csv
+*.jpg
+test.*
+!Uebung*/graphics/*.pdf
+
+# LaTeX / PDFLaTeX files
+*.aux
+*.dvi
+*.log
+*.out
+*.synctex*
+*.tmp
+
+# SVN-directories
+.svn
+
+# Eigene
+*.mat
+ueb*aufgaben.pdf
