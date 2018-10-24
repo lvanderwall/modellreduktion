@@ -1,0 +1,32 @@
+%This variable contains the path leading to the "LaTeX-Def"-files.
+%
+%Notice: Place the "LaTeX-Def"-folder on the same harddisk as your LaTeX-files!
+%Be sure not to forget the slash at the beginning and the end of the path!
+%\newcommand{\defaultPath}{/Lennys_Docs/LaTeX_Def/}
+\newcommand{\defaultPath}{/docs/LaTeX_Def/}
+
+\documentclass[ngerman,10pt,a4paper,twoside]{article}%
+
+\input{\defaultPath packages}%
+\input{\defaultPath commands}%
+
+\begin{document}%
+\pagenumbering{arabic}\thispagestyle{empty}%
+\renewcommand{\textfraction}{.01}
+%\input{./title_page}
+\begin{landscape}%
+\nsubsection{Aufgabe 1)}%
+Die oberen Graphiken zeigen Bode-Diagramm und $\sigma$-Plot für \texttt{CDPlayer.mat}, die unteren beiden für \texttt{rail\_1357.mat}:
+\begin{figure}[ht]%
+	\begin{floatrow}%
+		\picsbox[scale=.63]{a1a_bode.png}%
+		\picsbox[scale=.63]{a1a_sigma.png}%
+	\end{floatrow}%
+	\begin{floatrow}%
+		\picsbox[scale=.63]{a1b_bode.png}%
+		\picsbox[scale=.63]{a1b_sigma.png}%
+	\end{floatrow}%
+\end{figure}%
+\end{landscape}%
+
+\end{document}%
