@@ -1,7 +1,8 @@
 *.asv
-*.pdf
+*.bak
 *.csv
 *.jpg
+*.pdf
 test.*
 !Uebung*/graphics/*.pdf
 
