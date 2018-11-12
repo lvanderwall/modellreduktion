@@ -76,3 +76,39 @@ for k = (1 : 1 : 3)
     B_hat{k} = W{k}' * b;
     C_hat{k} = c * S{k};
 end
+
+
+% -------------------------------------------------------------------------
+% {A1b}
+% -------------------------------------------------------------------------
+% plot amplitudes, cannot use my_bode to get everything in one plot:
+w = logspace(-1, 2, 1e3);                   % w in s^{-1}
+
+% plot reduced models
+figure;                                     % new figure
+for k = (1 : 1 : 3)
+    tf = @(s) (...                          % scalar G_k,hat(iw)
+        C_hat{k} * (...
+            (s .* eye(size(A_hat{k}, 2)) - A_hat{k}) \ B_hat{k}...
+        )...
+    );
+
+    G = arrayfun(tf, 1i * w);               % calculate complex tf values
+    semilogx(w, 20 * log10(abs(G)));
+    hold on;
+end
+
+% plot unreduced model
+tf = @(s) (...                              % scalar G(iw)
+    c * (...
+        (s .* eye(size(A, 2)) - A) \ b...
+    )...
+);
+
+G = arrayfun(tf, 1i * w);                   % calculate complex tf values
+semilogx(w, 20 * log10(abs(G)), '-k');      % bode plot of unreduced LTI
+
+% annotations
+title("bode plot for G_{1, 1}(i\omega)");
+xlabel("\omega in s^{-1}");
+ylabel("|G_{1, 1}(i\omega)| in dB20");
