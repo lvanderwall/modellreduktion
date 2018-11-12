@@ -112,3 +112,90 @@ semilogx(w, 20 * log10(abs(G)), '-k');      % bode plot of unreduced LTI
 title("bode plot for G_{1, 1}(i\omega)");
 xlabel("\omega in s^{-1}");
 ylabel("|G_{1, 1}(i\omega)| in dB20");
+
+
+
+% -------------------------------------------------------------------------
+% {A2}
+% -------------------------------------------------------------------------
+clear variables;
+open 'ww_36_pmec_36.mat';           % SISO LTI without E of order n = 66
+
+% rename matrizes, do not use ans!
+A = ans.A;                          % in Mat(66 x 66, R)
+b = ans.b;                          % in Mat(66 x  1, R)
+c = ans.c;                          % in Mat( 1 x 66, R)
+d = ans.d;                          % in R
+clc;
+
+% -------------------------------------------------------------------------
+% {A2a}
+% -------------------------------------------------------------------------
+n = size(A, 2);
+g_amp = @(s) (...                   % |G(s)|_dB20
+    20.0 * log10(abs(...
+        c * (...
+            (s * eye(n) - A) \ b...
+        ) + d...
+    ))...
+);
+
+points = 200;                       % number of points per axis
+re_data = linspace(-2, 0, points);  % real axis
+im_data = linspace(0, 20, points);  % imaginary axis
+
+% amplitudes in db20, preallocate to improve speed
+am_data = zeros(size(re_data, 2), size(im_data, 2));
+h = waitbar(0, 'Calculate amplitudes...');
+for i = (1 : 1 : size(re_data, 2))
+    for j = (1 : 1 : size(im_data, 2))
+        am_data(i, j) = g_amp(re_data(i) + 1.0i*im_data(j));
+    end
+    waitbar(i / size(re_data, 2), h);
+end
+delete(h);
+
+% get poles and index of dominant poles
+poles = eig(A);
+[~, pole_idx] = sort(real(poles), 'descend');
+
+
+% im -> x-axis, re -> y-axis, am -> z-axis
+figure;                             % new figure
+h = meshc(im_data, re_data, am_data);
+hold on;
+plot3(...                           % |G(iw)|_dB20
+    im_data,...
+    zeros(size(im_data)),...
+    am_data(end, :),...
+    '-k',...
+    'LineWidth', 2 ...
+);
+
+% poles
+z_data = min(h(1).Parent.ZAxis.Limits);
+plot3(...
+    imag(poles),...
+    real(poles),...
+    z_data*ones(size(poles)),...
+    'ok',...
+    'MarkerFaceColor', [0, 0, 0]...
+);
+
+% dominant poles, there seems to be one instable pole at 8e-5!
+n_dom = 10;                         % only 10 dominant poles
+plot3(...
+    imag(poles(pole_idx(1 : 1 : n_dom))),...
+    real(poles(pole_idx(1 : 1 : n_dom))),...
+    z_data*ones(1, n_dom),...
+    'ok',...
+    'MarkerFaceColor', [0, 1, 0]...
+);
+
+% annotation
+h(1).Parent.YDir = 'reverse';       % reverse y-axis
+xlabel('Im(s)');
+ylabel('Re(s)');
+zlabel('|G(s)|_{dB20}');
+xlim([min(im_data), max(im_data)]); % do not expand axes for poles plot
+ylim([min(re_data), max(re_data)]);
